@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Form</title>
+</head>
+<body>
+{% if error %}
+  <p style="color: red">{{ error }}!</p>
+{% endif %}
+<form action="#" method="post">
+  <div>Username: <input name="username" value="{{ username }}"></div>
+  <div>Password: <input name="password" value="" type="password"></div>
+  <div><input type="submit" value="Submit"></div>
+</form>
+</body>
+</html>
