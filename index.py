@@ -1,8 +1,20 @@
 from flask import render_template, Flask, request, session, redirect
+import sqlite3
 app = Flask(__name__)
 default_password = "password"
-
 app.secret_key = 'my_secret_key'
+
+def getdb():
+  return db
+
+def getCursor():
+  return getdb().cursor()
+
+def connectdb():
+  db = sqlite3.connect('users.db')
+
+def closedb():
+  getdb().close()
 
 @app.route('/')
 def main():
@@ -12,10 +24,6 @@ def is_valid_login(password):
   if password == default_password:
       return True
   return False
-
-def log_the_user_in(username):
-  # we don't use sessions here so there is no extra work to be done
-  pass
 
 def parse_form(form):
   if 'username' in request.form:
@@ -38,6 +46,7 @@ def clearSession():
 def login():
   error = None
   username = ""
+  clearSession()
   if request.method == 'POST':
     session['username'], session['password'] = parse_form(request.form)
     if is_valid_login(session['password']):
@@ -50,17 +59,46 @@ def login():
     return render_template('user.html', username=session['username'])
   return render_template('login.html', username=username, error=error)
 
-@app.route('/color', methods=['POST'])
+@app.route('/color', methods=['POST', 'GET'])
 def favColor():
   #session['color'] = "green"
-  session['color'] = request.form['color']
+  if request.method == 'POST':
+    session['color'] = request.form['color']
   if session['username'] is not None and session['color'] is not None:
     return render_template('color.html', color=session['color'], username=session['username'])
+  return redirect('/login')
 
 @app.route('/logout')
 def logout():
   clearSession()
   return redirect('/login')
+
+@app.route('/register', methods=['post','get'])
+def register():
+
+  tableQuery = '''CREATE TABLE IF NOT EXISTS users(email TEXT,password TEXT, color TEXT, id INTEGER PRIMARY KEY AUTOINCREMENT);'''
+  checkUsers = '''SELECT 1 FROM users WHERE email=?;'''
+  addUser = '''INSERT INTO users(email,password,color) VALUES(?,?,?);'''
+  showData = '''SELECT * FROM users;'''
+
+  if request.method == "POST":
+    newUsername = request.form['username']
+    newPassword = request.form['password']
+    db = sqlite3.connect('users.db')
+    c = db.cursor()
+    c.execute(tableQuery)
+    c.execute(addUser, (newUsername, newPassword, None))
+    data = c.execute(showData)
+    db.commit()
+
+    #pyData = []
+    #for item in data:
+
+
+
+    db.close()
+  return render_template('registerAccount.html')
+
 
 if __name__ == '__main__':
   app.debug = True
