@@ -87,18 +87,17 @@ def register():
     db = sqlite3.connect('users.db')
     c = db.cursor()
     c.execute(tableQuery)
-    c.execute(addUser, (newUsername, newPassword, None))
-    data = c.execute(showData)
+    if c.execute(checkUsers, newUsername):
+      #return 'Username already exists'
+      error = 'Username already exists. Account not created'
+      db.close()
+      return render_template('registerAccount.html', error=error)
+    else:
+      c.execute(addUser, (newUsername, newPassword, None))
+    #data = c.execute(showData)
     db.commit()
-
-    #pyData = []
-    #for item in data:
-
-
-
     db.close()
   return render_template('registerAccount.html')
-
 
 if __name__ == '__main__':
   app.debug = True
