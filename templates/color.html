@@ -10,6 +10,27 @@
 <div>
 	<h1>Welcome {{ username }} ! </h1>
 	<p>
+	<p>
+		What is your favorite color?
+	</p>
+	<form action ="/color" method="post">
+	<input type="radio" name="color" value="green"> Favorite color is green<br>
+	<input type="radio" name="color" value="blue"> Favorite color is blue<br>
+	<input type="radio" name="color" value="orange"> Favorite color is orange<br>
+	<div><input type="submit" value="submit"></div>
+
+	<form action="/color" method="post">
+	<div>
+		<p>Or type a color!</p>
+		<p></p><p></p>
+		aqua, black, blue, fuchsia, gray, green, lime, maroon, navy, olive, orange, purple, red, silver, teal, white, yellow
+	</div>
+	<div>
+		<input name="color" value=""></div>
+	</div>
+	<div><input type="submit" value="submit"></div>
+	</form>
+
 	<form action="/logout">
 	<input type="submit" value="logout">
 	</form>
